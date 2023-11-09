@@ -36,23 +36,16 @@ const int consumer_time = 3;
 const int supplier_time = 2;
 struct timespec T;
 
-// time_t currentTime;
-// struct tm* timeInfo;
+time_t currentTime;
+struct tm* timeInfo;
 
 int Buffer = 1;
 
 void print_debug(const char* message) {
-    // currentTime = time(NULL);
-    // timeInfo = localtime(&currentTime);
-    // float seconds = ((float)(clock() % 1000)/1000) + (float)(timeInfo->tm_sec % 60);
-    // printf("%02d:%02d:%02.3f: %s\n", timeInfo->tm_hour, timeInfo->tm_min, seconds, message);
-    clock_gettime(CLOCK_REALTIME_COARSE, &T);
-    float seconds = ((float)(clock() % 1000)/1000) + (float)(T.tv_sec % 60);
-    printf("%02ld:%02ld:%02ld.%03ld: %s\n", (T.tv_sec / 3600 + 3) % 24, // hours in Moscow
-                                            (T.tv_sec / 60) % 60, // minutes
-                                            T.tv_sec % 60, // seconds
-                                            T.tv_nsec / 1000000, // milliseconds
-                                            message);
+    currentTime = time(NULL);
+    timeInfo = localtime(&currentTime);
+    float seconds = ((float)(clock() % 1000)/1000) + (float)(timeInfo->tm_sec % 60);
+    printf("%02d:%02d:%02.3f: %s\n", timeInfo->tm_hour, timeInfo->tm_min, seconds, message);
 }
 
 #if SEMAPHORE_VER
