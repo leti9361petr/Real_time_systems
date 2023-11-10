@@ -211,28 +211,40 @@ int main(int argc, char *argv[]) {
 // ----------------------------------------//
 /*
 Max goods at storage: 2
-03:36:2.941: Supplier tries to bring some goods
-There's 1 goods
-03:36:2.955: Supplier brought some goods
-03:36:2.999: Consumer tries to get some goods
-There's 2 goods
-03:36:2.025: Consumer got some goods
-03:36:4.093: Supplier tries to bring some goods
-There's 1 goods
-03:36:4.152: Supplier brought some goods
-03:36:5.298: Consumer tries to get some goods
-There's 2 goods
-03:36:5.399: Consumer got some goods
-03:36:6.555: Supplier tries to bring some goods
-There's 1 goods
-03:36:6.658: Supplier brought some goods
-03:36:8.923: Supplier tries to bring some goods
-There's 2 goods
-03:36:8.982: There's no place for goods at the storage yet
-03:36:8.049: Consumer tries to get some goods
-There's 2 goods
-03:36:8.128: Consumer got some goods
-03:36:10.241: Supplier tries to bring some goods
-There's 1 goods
-03:36:10.304: Supplier brought some goods
+03:14:50.405: Supplier tries to bring some goods
+There's 0 goods out of 2
+03:14:50.419: Supplier brought some goods
+03:14:50.455: Consumer tries to get some goods
+There's 1 goods for consumer
+03:14:50.464: Consumer got some goods
+03:14:52.499: Supplier tries to bring some goods
+There's 0 goods out of 2
+03:14:52.518: Supplier brought some goods
+03:14:53.581: Consumer tries to get some goods
+There's 1 goods for consumer
+03:14:53.626: Consumer got some goods
+03:14:54.780: Supplier tries to bring some goods
+There's 0 goods out of 2
+03:14:54.846: Supplier brought some goods
+03:14:56.952: Consumer tries to get some goods
+There's 1 goods for consumer
+03:14:56.028: Consumer got some goods
+03:14:56.120: Supplier tries to bring some goods
+There's 0 goods out of 2
+03:14:56.179: Supplier brought some goods
+03:14:58.280: Supplier tries to bring some goods
+There's 1 goods out of 2
+03:14:58.346: Supplier brought some goods
+03:14:59.411: Consumer tries to get some goods
+There's 2 goods for consumer
+03:14:59.440: Consumer got some goods
+03:15:0.535: Supplier tries to bring some goods
+There's 1 goods out of 2
+03:15:0.599: Supplier brought some goods
+03:15:2.687: Consumer tries to get some goods
+There's 2 goods for consumer
+03:15:2.748: Consumer got some goods
+03:15:2.882: Supplier tries to bring some goods
+There's 1 goods out of 2
+03:15:2.942: Supplier brought some goods
 */
