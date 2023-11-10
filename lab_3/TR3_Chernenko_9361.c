@@ -39,7 +39,7 @@ struct timespec T;
 time_t currentTime;
 struct tm* timeInfo;
 
-int Buffer = 1;
+int Buffer = 0;
 
 void print_debug(const char* message) {
     currentTime = time(NULL);
@@ -49,24 +49,30 @@ void print_debug(const char* message) {
 }
 
 #if SEMAPHORE_VER
-sem_t semaphore;
+sem_t bin_semaphore, cons_sem, suppl_sem;
 
 void* Consumer (void* args) {
     int* consume = (int*)args;
     while (*consume) {
-        sem_wait(&semaphore);
+        sem_wait(&cons_sem);
         print_debug("Consumer tries to get some goods");
-        printf("There's %d goods\n", Buffer);
+
+        sem_wait(&bin_semaphore);
+        printf("There's %d goods for consumer\n", Buffer);
 
         // «Критическая секция»
         if (Buffer > 0) {
             Buffer--;
             print_debug("Consumer got some goods");
         } else {
-            print_debug("There's no goods for consumer yet");
+            print_debug("Error occurred while consuming!");
+            sem_post(&bin_semaphore);
+            sem_post(&suppl_sem);
+            return (void*)EXIT_FAILURE;
         }
 
-        sem_post(&semaphore);
+        sem_post(&bin_semaphore);
+        sem_post(&suppl_sem);
         sleep(consumer_time);
     }
     return EXIT_SUCCESS;
@@ -75,19 +81,25 @@ void* Consumer (void* args) {
 void* Supplier (void* args) {
     int* supply = (int*)args;
     while (*supply) {
-        sem_wait(&semaphore);
+        sem_wait(&suppl_sem);
         print_debug("Supplier tries to bring some goods");
-        printf("There's %d goods\n", Buffer);
+
+        sem_wait(&bin_semaphore);
+        printf("There's %d goods out of %d\n", Buffer, full_buffer);
 
         // «Критическая секция»
         if (Buffer < full_buffer) {
             Buffer++;
             print_debug("Supplier brought some goods");
         } else {
-            print_debug("There's no place for goods at the storage yet");
+            print_debug("Error occurred while supplying!");
+            sem_post(&bin_semaphore);
+            sem_post(&cons_sem);
+            return (void*)EXIT_FAILURE;
         }
 
-        sem_post(&semaphore);
+        sem_post(&bin_semaphore);
+        sem_post(&cons_sem);
         sleep (supplier_time);
     }
     return EXIT_SUCCESS;
@@ -97,7 +109,9 @@ int main(int argc, char *argv[]) {
     printf("Max goods at storage: %d\n", full_buffer);
     pthread_t thread_Cons, thread_Sup;
     int consume = 1, supply = 1;
-    sem_init(&semaphore, 0, 1);
+    sem_init(&bin_semaphore, 0, 1);
+    sem_init(&cons_sem, 0, 0);
+    sem_init(&suppl_sem, 0, full_buffer);
     pthread_create(&thread_Cons, NULL, &Consumer, (void*)(&consume));
     pthread_create(&thread_Sup, NULL, &Supplier, (void*)(&supply));
 
@@ -107,7 +121,9 @@ int main(int argc, char *argv[]) {
 
     pthread_join(thread_Cons, NULL);
     pthread_join(thread_Sup, NULL);
-    sem_destroy(&semaphore);
+    sem_destroy(&bin_semaphore);
+    sem_destroy(&cons_sem);
+    sem_destroy(&suppl_sem);
     return EXIT_SUCCESS;
 }
 #else
