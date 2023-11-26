@@ -26,8 +26,74 @@
  */
 // ------------------------------------------- //
 
+#include <stdio.h>
+#include <time.h>
+#include <signal.h>
 
-// TODO: add code here
+#define MY_SIGNAL        SIGUSR2  // SIGUSR1   SIGALRM
+
+// somehow it is not implemented by default
+#define SIGEV_SIGNAL_INIT(__e, __s)			 \
+        ((__e)->sigev_notify = SIGEV_SIGNAL, \
+        (__e)->sigev_signo = (__s))
+
+time_t currentTime;
+struct tm* timeInfo;
+
+void pretty_print_time(const struct tm* T, clock_t S) {
+    printf("%02d:%02d:%02.3f", T->tm_hour, T->tm_min, ((float)(S % 1000)/1000) + (float)(T->tm_sec % 60));
+}
+
+void print_debug(const char* message) {
+    currentTime = time(NULL);
+    timeInfo = localtime(&currentTime);
+    float seconds = ((float)(clock() % 1000)/1000) + (float)(timeInfo->tm_sec % 60);
+    printf("%02d:%02d:%02.3f", timeInfo->tm_hour, timeInfo->tm_min, seconds);
+}
+
+void doControl_1(int signal_n) {
+    static struct tm*  last_;
+    printf(" Procedure # 1");
+    [<момент_вызова>] %f ms, [<период>] %f ms”, . . .);
+}
+void set_periodic_timer_fields(struct itimerspec* timer, size_t sec, size_t ms) {
+    timer->it_value.tv_sec = sec;
+    timer->it_value.tv_nsec = ms * 1000000;
+    timer->it_interval.tv_sec = sec;
+    timer->it_interval.tv_nsec = ms * 1000000;
+}
+
+int main() {
+    struct sigevent         event;
+    struct itimerspec       itime;
+    timer_t                 timer_id;
+
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, MY_SIGNAL);
+
+    struct sigaction act;
+    act.sa_handler = &catch_sig;
+    act.sa_flags = 0;
+    act.sa_mask = set;
+    sigaction(MY_SIGNAL, &act, NULL);
+
+    /*
+    event.sigev_notify = SIGEV_SIGNAL;
+    event.sigev_signo = MY_SIGNAL;
+    */
+
+    int signo = MY_SIGNAL;
+    SIGEV_SIGNAL_INIT(&event, signo);
+
+    timer_create(CLOCK_REALTIME, &event, &timer_id);
+
+    set_periodic_timer_fields(&itime, 0, 500);
+    timer_settime(timer_id, 0, &itime, NULL);
+
+    for (;;) {
+    }
+}
 
 // ----------------------------------------//
 /*
